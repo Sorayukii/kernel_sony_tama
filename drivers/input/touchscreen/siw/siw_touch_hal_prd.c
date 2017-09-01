@@ -2041,7 +2041,7 @@ static int prd_spec_file_read_ext(struct siw_hal_prd_data *prd)
 		goto out;
 	}
 
-	kernel_read(filp, offset, (char *)prd->line, sizeof(prd->line));
+	kernel_read(filp, prd->line, sizeof(prd->line), &offset);
 
 	filp_close(filp, 0);
 

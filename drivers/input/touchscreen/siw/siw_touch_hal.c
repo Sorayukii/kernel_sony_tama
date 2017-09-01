@@ -3750,6 +3750,7 @@ static int siw_hal_fw_do_get_fw_abs(const struct firmware **fw_p,
 	struct file *filp = NULL;
 	char *buf = NULL;
 	loff_t size;
+	loff_t pos = 0;
 	int rd_size;
 	int ret = 0;
 
@@ -3779,9 +3780,8 @@ static int siw_hal_fw_do_get_fw_abs(const struct firmware **fw_p,
 		goto out;
 	}
 
-	rd_size = kernel_read(filp, 0,
-				(char *)buf,
-				(unsigned long)size);
+	pos = 0;
+	rd_size = kernel_read(filp, buf, (size_t)size, &pos);
 	if (rd_size != (int)size) {
 		t_dev_err(dev, "can't read[%d], %d\n",
 			(int)size, (int)rd_size);

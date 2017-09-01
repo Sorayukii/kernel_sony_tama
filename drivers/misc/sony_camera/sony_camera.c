@@ -2416,6 +2416,7 @@ static long sony_camera_ioctl_common(struct file *file,
 	unsigned long flags;
 	struct sony_camera_data *data = (struct sony_camera_data *)file->private_data;
 	struct sony_camera_i2c_data setting;
+	loff_t pos = 0;
 
 	if (!data->probe_done) {
 		LOGE("device probe not done\n");
@@ -2507,7 +2508,7 @@ static long sony_camera_ioctl_common(struct file *file,
 		}
 
 		LOGI("Firmware size:%d.\n", size);
-		if (kernel_read(fp, 0, fw_buf, size) != size) {
+		if (kernel_read(fp, fw_buf, size, &pos) != size) {
 			LOGE(KERN_INFO "Failed to read %s\n",
 				 firmware->fw_path);
 			filp_close(fp, NULL);
