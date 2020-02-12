@@ -12,7 +12,6 @@
 #include <linux/cpumask.h>
 #include <linux/debugfs.h>
 #include <linux/energy_model.h>
-#include <linux/sched/topology.h>
 #include <linux/slab.h>
 
 /* Mapping of each CPU to the performance domain to which it belongs. */
