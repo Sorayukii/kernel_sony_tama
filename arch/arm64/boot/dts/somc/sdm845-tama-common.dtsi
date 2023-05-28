@@ -3132,8 +3132,8 @@
 	xo-therm-adc {
 		trips {
 			active-config0 {
-				temperature = <2147483647>;
-				hysteresis = <(-1)>;
+				temperature = <125000>;
+				hysteresis = <10000>;
 			};
 		};
 	};
@@ -3141,8 +3141,8 @@
 	msm-therm-adc {
 		trips {
 			active-config0 {
-				temperature = <2147483647>;
-				hysteresis = <(-1)>;
+				temperature = <125000>;
+				hysteresis = <10000>;
 			};
 		};
 	};
@@ -3155,8 +3155,8 @@
 
 		trips {
 			active-config0 {
-				temperature = <2147483647>;
-				hysteresis = <(-1)>;
+				temperature = <125000>;
+				hysteresis = <10000>;
 				type = "passive";
 			};
 		};
@@ -3165,8 +3165,8 @@
 	pa-therm1-adc {
 		trips {
 			active-config0 {
-				temperature = <2147483647>;
-				hysteresis = <(-1)>;
+				temperature = <125000>;
+				hysteresis = <10000>;
 			};
 		};
 	};
@@ -3179,8 +3179,8 @@
 
 		trips {
 			active-config0 {
-				temperature = <2147483647>;
-				hysteresis = <(-1)>;
+				temperature = <125000>;
+				hysteresis = <10000>;
 				type = "passive";
 			};
 		};
@@ -3189,8 +3189,8 @@
 	quiet-therm-adc {
 		trips {
 			active-config0 {
-				temperature = <2147483647>;
-				hysteresis = <(-1)>;
+				temperature = <125000>;
+				hysteresis = <10000>;
 			};
 		};
 	};
@@ -3203,8 +3203,8 @@
 
 		trips {
 			active-config0 {
-				temperature = <2147483647>;
-				hysteresis = <(-1)>;
+				temperature = <125000>;
+				hysteresis = <10000>;
 				type = "passive";
 			};
 		};
