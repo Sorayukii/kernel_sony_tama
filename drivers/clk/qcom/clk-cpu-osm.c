@@ -801,6 +801,7 @@ static int osm_cpufreq_cpu_init(struct cpufreq_policy *policy)
 	nr_opp = ret;
 
 	policy->cpuinfo.transition_latency = MIN_RATE_LIMIT_US;
+	policy->dvfs_possible_from_any_cpu = true;
 	policy->driver_data = c;
 
 	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
