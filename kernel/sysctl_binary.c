@@ -394,6 +394,27 @@ static const struct bin_table bin_net_ipv4_table[] = {
 	{ CTL_STR,	NET_TCP_CONG_CONTROL,			"tcp_congestion_control" },
 	{ CTL_INT,	NET_TCP_MTU_PROBING,			"tcp_mtu_probing" },
 	{ CTL_INT,	NET_TCP_BASE_MSS,			"tcp_base_mss" },
+
+	/* DeepCC Functionality */
+	{ CTL_INT,  NET_TCP_DEEPCC,          		"tcp_deepcc" },
+
+	/* C2TCP Functionality */
+	{ CTL_INT,  NET_TCP_C2TCP_ENABLE,          "tcp_c2tcp_enable" },
+
+	/* Custom sysctl control params added for BBR */
+	{ CTL_INT,	NET_TCP_BBR_INIT_CWND,				"tcp_bbr_init_cwnd" },
+	{ CTL_INT,	NET_TCP_BBR_ENABLE_APP_LIMITED,		"tcp_bbr_enable_app_limited" },
+	{ CTL_INT,	NET_TCP_BBR_ENABLE_LT_BW,			"tcp_bbr_enable_lt_bw" },
+	{ CTL_INT,	NET_TCP_BBR_CWND_RV_GAIN,			"tcp_bbr_cwnd_rv_gain" },
+	{ CTL_INT,	NET_TCP_BBR_DEBUG,					"tcp_bbr_debug" },
+	{ CTL_INT,	NET_TCP_BBR_ENABLE_MAXDELAY,		"tcp_bbr_enable_maxdelay" },
+	{ CTL_INT,	NET_TCP_BBR_ENABLE_PROBERTT,		"tcp_bbr_enable_probertt" },
+	{ CTL_INT,	NET_TCP_BBR_TARGETDELAY,			"tcp_bbr_targetdelay" },
+	{ CTL_INT,	NET_TCP_BBR_MINRTTWINSEC,			"tcp_bbr_minrttwinsec" },
+	{ CTL_INT,	NET_TCP_BBR_PROBERTTMODEMS,			"tcp_bbr_proberttmodems" },
+	{ CTL_INT,	NET_TCP_BBR_BW,						"tcp_bbr_bw" },
+	{ CTL_INT,	NET_TCP_BBR_BW_AUTO,				"tcp_bbr_bw_auto" },
+
 	{ CTL_INT,	NET_IPV4_TCP_WORKAROUND_SIGNED_WINDOWS,	"tcp_workaround_signed_windows" },
 	{ CTL_INT,	NET_TCP_SLOW_START_AFTER_IDLE,		"tcp_slow_start_after_idle" },
 	{ CTL_INT,	NET_CIPSOV4_CACHE_ENABLE,		"cipso_cache_enable" },

@@ -277,6 +277,29 @@ extern int sysctl_tcp_invalid_ratelimit;
 extern int sysctl_tcp_pacing_ss_ratio;
 extern int sysctl_tcp_pacing_ca_ratio;
 
+/*
+ * Custom variables for sysctl Params
+ */
+extern unsigned int sysctl_tcp_bbr_enable_app_limited;
+extern unsigned int sysctl_tcp_bbr_enable_lt_bw;
+extern unsigned int sysctl_tcp_bbr_cwnd_rv_gain;
+extern unsigned int sysctl_tcp_bbr_enable_maxdelay;
+extern unsigned int sysctl_tcp_bbr_enable_probertt;
+extern unsigned int sysctl_tcp_bbr_targetdelay;
+extern unsigned int sysctl_bbr_min_rtt_win_sec;
+extern unsigned int sysctl_bbr_probe_rtt_mode_ms;
+extern unsigned int sysctl_tcp_bbr_bw_auto;
+extern unsigned int sysctl_tcp_bbr_bw;
+extern unsigned int sysctl_tcp_bbr_debug;
+extern unsigned int sysctl_tcp_bbr_init_cwnd;
+
+/* DeepCC */
+extern int sysctl_tcp_deepcc_enable;
+#define CWND_GAIN_SCALE  100;
+
+/* C2TCP */
+extern int sysctl_tcp_c2tcp_enable;
+
 extern atomic_long_t tcp_memory_allocated;
 
 /* sysctl variables for controlling various tcp parameters */
@@ -966,6 +989,14 @@ struct tcp_congestion_ops {
 	/* get info for inet_diag (optional) */
 	size_t (*get_info)(struct sock *sk, u32 ext, int *attr,
 			   union tcp_cc_info *info);
+	/* NATCP */
+	void (*update_by_app)(struct sock *sk);
+
+	/* C2TCP */
+	void (*enable_c2tcp)(struct sock *sk, int enable);
+
+	/* RL-C2TCP */
+	void (*get_rate_sample)(struct sock *sk, const struct rate_sample *rs);
 
 	char 		name[TCP_CA_NAME_MAX];
 	struct module 	*owner;
@@ -1025,6 +1056,14 @@ static inline void tcp_ca_event(struct sock *sk, const enum tcp_ca_event event)
 	if (icsk->icsk_ca_ops->cwnd_event)
 		icsk->icsk_ca_ops->cwnd_event(sk, event);
 }
+
+/* From tcp_deepcc.c */
+void deepcc_init(struct sock * sk);
+size_t deepcc_get_info(struct sock *sk, u32 ext, int *attr,union tcp_cc_info *info);
+void deepcc_get_rate_sample(struct sock *sk, const struct rate_sample *rs);
+void deepcc_update_cwnd(struct sock *sk);
+void deepcc_pkts_acked(struct sock *sk, const struct ack_sample *sample);
+
 
 /* From tcp_rate.c */
 void tcp_rate_skb_sent(struct sock *sk, struct sk_buff *skb);

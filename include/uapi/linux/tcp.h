@@ -118,6 +118,30 @@ enum {
 #define TCP_REPAIR_WINDOW	29	/* Get/set window parameters */
 #define TCP_FASTOPEN_CONNECT	30	/* Attempt FastOpen with connect */
 
+/*
+ * Defining custom Socket TCP Options
+ */
+#define TCP_BBR_EN_MAXDEL 33
+#define TCP_BBR_EN_PRBRTT 34
+#define TCP_BBR_TRGTDEL_US 35
+#define TCP_BBR_MINRTTWIN_SEC 36
+#define TCP_BBR_PRBERTTMDE_MS 37
+#define TCP_BBR_BWAUTO 38
+#define TCP_BBR_BWVAL 39
+#define TCP_BBR_CWNDRVGAIN 40
+#define TCP_BBR_DEBUG 41
+#define TCP_CWND_CLAMP 42
+#define TCP_CWND 43
+#define TCP_DEEPCC_ENABLE 44
+#define TCP_CWND_CAP 45
+
+#define TCP_DEEPCC_INFO	46	/* Get Congestion Control (optional) DeepCC info */
+#define TCP_CWND_MIN 47
+
+/* C2TCP */
+#define  TCP_C2TCP_ENABLE 50
+#define  TCP_C2TCP_ALPHA 51
+
 struct tcp_repair_opt {
 	__u32	opt_code;
 	__u32	opt_val;

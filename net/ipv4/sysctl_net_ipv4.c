@@ -610,6 +610,20 @@ static struct ctl_table ipv4_table[] = {
 		.extra2		= &gso_max_segs,
 	},
 	{
+		.procname   = "tcp_deepcc",
+		.data       = &sysctl_tcp_deepcc_enable,
+		.maxlen     = sizeof(int),
+		.mode       = 0644,
+		.proc_handler   = proc_dointvec
+	},
+	{
+		.procname   = "tcp_c2tcp_enable",
+		.data       = &sysctl_tcp_c2tcp_enable,
+		.maxlen     = sizeof(int),
+		.mode       = 0644,
+		.proc_handler   = proc_dointvec
+	},
+	{
 		.procname	= "tcp_pacing_ss_ratio",
 		.data		= &sysctl_tcp_pacing_ss_ratio,
 		.maxlen		= sizeof(int),
@@ -650,6 +664,92 @@ static struct ctl_table ipv4_table[] = {
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= &zero,
+	},
+	/* Custom bindings for SYSCTL BBR Params */
+	{
+		.procname	= "tcp_bbr_cwnd_rv_gain",
+		.data		= &sysctl_tcp_bbr_cwnd_rv_gain,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_enable_maxdelay",
+		.data		= &sysctl_tcp_bbr_enable_maxdelay,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+
+	{
+		.procname	= "tcp_bbr_enable_probertt",
+		.data		= &sysctl_tcp_bbr_enable_probertt,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_targetdelay",
+		.data		= &sysctl_tcp_bbr_targetdelay,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_debug",
+		.data		= &sysctl_tcp_bbr_debug,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_enable_app_limited",
+		.data		= &sysctl_tcp_bbr_enable_app_limited,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_enable_lt_bw",
+		.data		= &sysctl_tcp_bbr_enable_lt_bw,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_bw_auto",
+		.data		= &sysctl_tcp_bbr_bw_auto,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_init_cwnd",
+		.data		= &sysctl_tcp_bbr_init_cwnd,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	}
+	,{
+		.procname	= "tcp_bbr_bw",
+		.data		= &sysctl_tcp_bbr_bw,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_minrttwinsec",
+		.data		= &sysctl_bbr_min_rtt_win_sec,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
+	},
+	{
+		.procname	= "tcp_bbr_proberttmodems",
+		.data		= &sysctl_bbr_probe_rtt_mode_ms,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= proc_douintvec,
 	},
 	{
 		.procname	= "icmp_msgs_burst",

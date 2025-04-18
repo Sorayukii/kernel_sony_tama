@@ -307,6 +307,46 @@ int sysctl_tcp_use_userconfig __read_mostly;
 EXPORT_SYMBOL(sysctl_tcp_use_userconfig);
 
 /*
+ * SYSCTL BBR PARAMS
+ */
+/* Enable Auto BW PROBING*/
+unsigned int sysctl_tcp_bbr_init_cwnd __read_mostly = 4;
+EXPORT_SYMBOL(sysctl_tcp_bbr_init_cwnd);
+
+unsigned int sysctl_tcp_bbr_enable_app_limited __read_mostly = 1;
+EXPORT_SYMBOL(sysctl_tcp_bbr_enable_app_limited);
+
+unsigned int sysctl_tcp_bbr_enable_lt_bw __read_mostly = 1;
+EXPORT_SYMBOL(sysctl_tcp_bbr_enable_lt_bw);
+
+unsigned int sysctl_tcp_bbr_bw_auto __read_mostly = 1;
+EXPORT_SYMBOL(sysctl_tcp_bbr_bw_auto);
+/* SET BW MANUALLY (Kbps)*/
+unsigned int sysctl_tcp_bbr_bw __read_mostly = 2000; //2000kbps
+EXPORT_SYMBOL(sysctl_tcp_bbr_bw);
+/* CWND GAIN*/
+unsigned int sysctl_tcp_bbr_cwnd_rv_gain __read_mostly = 1;
+EXPORT_SYMBOL(sysctl_tcp_bbr_cwnd_rv_gain);
+/* TCP BBR Debug */
+unsigned int sysctl_tcp_bbr_debug __read_mostly = 0;
+EXPORT_SYMBOL(sysctl_tcp_bbr_debug);
+/* Target Delay Enable */
+unsigned int sysctl_tcp_bbr_enable_maxdelay __read_mostly = 0;
+EXPORT_SYMBOL(sysctl_tcp_bbr_enable_maxdelay);
+/* Enable/Disable Probe RTT */
+unsigned int sysctl_tcp_bbr_enable_probertt __read_mostly = 1;
+EXPORT_SYMBOL(sysctl_tcp_bbr_enable_probertt);
+/* Target Delay Capping the min RTT */
+unsigned int sysctl_tcp_bbr_targetdelay __read_mostly = 0;
+EXPORT_SYMBOL(sysctl_tcp_bbr_targetdelay);
+/* Window length of min_rtt filter (in sec): */
+unsigned int sysctl_bbr_min_rtt_win_sec __read_mostly = 10;
+EXPORT_SYMBOL(sysctl_bbr_min_rtt_win_sec);
+/* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
+unsigned int sysctl_bbr_probe_rtt_mode_ms __read_mostly = 200;
+EXPORT_SYMBOL(sysctl_bbr_probe_rtt_mode_ms);
+
+/*
  * Current number of TCP sockets.
  */
 struct percpu_counter tcp_sockets_allocated;
@@ -412,6 +452,11 @@ void tcp_init_sock(struct sock *sk)
 	tp->snd_cwnd_clamp = ~0;
 	tp->mss_cache = TCP_MSS_DEFAULT;
 	u64_stats_init(&tp->syncp);
+
+	/*
+	 * Orca Cwnd_coef init. to 1
+	 */
+	tp->cwnd_min = 1;
 
 	tp->reordering = sock_net(sk)->ipv4.sysctl_tcp_reordering;
 	tcp_enable_early_retrans(tp);
@@ -596,6 +641,7 @@ int tcp_ioctl(struct sock *sk, int cmd, unsigned long arg)
 		else
 			answ = tp->write_seq - tp->snd_nxt;
 		break;
+
 	default:
 		return -ENOIOCTLCMD;
 	}
@@ -2499,6 +2545,7 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
 		release_sock(sk);
 		return err;
 	}
+
 	default:
 		/* fallthru */
 		break;
@@ -2767,6 +2814,116 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
 		WRITE_ONCE(tp->notsent_lowat, val);
 		sk->sk_write_space(sk);
 		break;
+	/*
+	 * Raw implementation of sockets.
+	 * Basically hacked the current code to set variables.
+	 * Complete rewrite and seperate socket implementation should be done.
+	*/
+	case TCP_BBR_EN_MAXDEL:
+		sysctl_tcp_bbr_enable_maxdelay = val;
+		break;
+	case TCP_BBR_EN_PRBRTT:
+		sysctl_tcp_bbr_enable_probertt = val;
+		break;
+	case TCP_BBR_TRGTDEL_US:
+		sysctl_tcp_bbr_targetdelay = val;
+		break;
+	case TCP_BBR_MINRTTWIN_SEC:
+		sysctl_bbr_min_rtt_win_sec = val;
+		break;
+	case TCP_BBR_PRBERTTMDE_MS:
+		sysctl_bbr_probe_rtt_mode_ms = val;
+		break;
+	case TCP_BBR_BWAUTO:
+		sysctl_tcp_bbr_bw_auto = val;
+		break;
+	case TCP_BBR_BWVAL:
+		sysctl_tcp_bbr_bw = val;
+		break;
+	case TCP_BBR_CWNDRVGAIN:
+		sysctl_tcp_bbr_cwnd_rv_gain = val;
+		break;
+	case TCP_BBR_DEBUG:
+		sysctl_tcp_bbr_debug = val;
+		if (icsk->icsk_ca_ops->update_by_app) {
+			icsk->icsk_ca_ops->update_by_app(sk);
+			tcp_push_pending_frames(sk);
+		}
+		break;
+	case TCP_CWND_CLAMP:
+		if(sysctl_tcp_bbr_init_cwnd<=val/tp->mss_cache)
+			tp->snd_cwnd_clamp = val/tp->mss_cache;
+		if (icsk->icsk_ca_ops->update_by_app) {
+			icsk->icsk_ca_ops->update_by_app(sk);
+			tcp_push_pending_frames(sk);
+		}
+		break;
+/*
+ * DeepCC
+ *
+ */
+	case TCP_DEEPCC_ENABLE:
+		tp->deepcc_enable = val;
+
+		break;
+
+	case TCP_CWND_CAP:
+		if(sysctl_tcp_bbr_init_cwnd<=val)
+		{
+			tp->snd_cwnd_clamp = val;
+			tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
+			tcp_push_pending_frames(sk);
+		}
+		break;
+
+	case TCP_CWND:
+		if(sysctl_tcp_bbr_init_cwnd<=val)
+		{
+			tp->snd_cwnd =min((u32)val,tp->snd_cwnd_clamp);
+		}
+		else
+		{
+			tp->snd_cwnd =min((u32)sysctl_tcp_bbr_init_cwnd,tp->snd_cwnd_clamp);
+		}
+		if (icsk->icsk_ca_ops->update_by_app)
+		{
+			icsk->icsk_ca_ops->update_by_app(sk);
+		}
+		tcp_push_pending_frames(sk);
+		break;
+
+	case TCP_CWND_MIN:
+		if(sysctl_tcp_bbr_init_cwnd<=val)
+		{
+			tp->cwnd_min =val;
+		}
+		else
+		{
+			tp->cwnd_min =sysctl_tcp_bbr_init_cwnd;
+		}
+		tp->snd_cwnd =max(tp->cwnd_min,tp->snd_cwnd);
+		tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
+		if (icsk->icsk_ca_ops->update_by_app)
+		{
+			icsk->icsk_ca_ops->update_by_app(sk);
+		}
+		tcp_push_pending_frames(sk);
+		break;
+
+//END
+
+/*C2TCP: PARAMETERS*/
+	case TCP_C2TCP_ENABLE:
+		if (icsk->icsk_ca_ops->enable_c2tcp)
+		{
+			icsk->icsk_ca_ops->enable_c2tcp(sk,val);
+		}
+		break;
+	case TCP_C2TCP_ALPHA:
+		tp->c2tcp_alpha = val;
+		break;
+//END
+
 	default:
 		err = -ENOPROTOOPT;
 		break;
@@ -2979,6 +3136,27 @@ static int do_tcp_getsockopt(struct sock *sk, int level,
 			return -EFAULT;
 		return 0;
 	}
+	case TCP_DEEPCC_INFO: {
+		const struct tcp_congestion_ops __maybe_unused *ca_ops;
+		union tcp_cc_info info;
+		size_t sz = 0;
+		int attr;
+
+		if (get_user(len, optlen))
+			return -EFAULT;
+
+		if(!tp->deepcc_enable && !sysctl_tcp_deepcc_enable)
+			return -EFAULT;
+
+		sz = deepcc_get_info(sk, ~0U, &attr, &info);
+
+		len = min_t(unsigned int, len, sz);
+		if (put_user(len, optlen))
+			return -EFAULT;
+		if (copy_to_user(optval, &info, len))
+			return -EFAULT;
+		return 0;
+	}
 	case TCP_CC_INFO: {
 		const struct tcp_congestion_ops *ca_ops;
 		union tcp_cc_info info;
@@ -3116,6 +3294,41 @@ static int do_tcp_getsockopt(struct sock *sk, int level,
 		}
 		return 0;
 	}
+	/*
+         * Raw implementation of sockets.
+         * Basically hacked the current code to set variables.
+         * Complete rewrite and seperate socket implementation should be done.
+        */
+        case TCP_BBR_EN_MAXDEL:
+                val = sysctl_tcp_bbr_enable_maxdelay;
+                break;
+        case TCP_BBR_EN_PRBRTT:
+                val = sysctl_tcp_bbr_enable_probertt;
+                break;
+        case TCP_BBR_TRGTDEL_US:
+                val = sysctl_tcp_bbr_targetdelay;
+                break;
+        case TCP_BBR_MINRTTWIN_SEC:
+                val = sysctl_bbr_min_rtt_win_sec;
+                break;
+        case TCP_BBR_PRBERTTMDE_MS:
+                val = sysctl_bbr_probe_rtt_mode_ms;
+                break;
+        case TCP_BBR_BWAUTO:
+                val = sysctl_tcp_bbr_bw_auto;
+                break;
+        case TCP_BBR_BWVAL:
+                val = sysctl_tcp_bbr_bw;
+                break;
+        case TCP_BBR_CWNDRVGAIN:
+                val = sysctl_tcp_bbr_cwnd_rv_gain;
+                break;
+        case TCP_BBR_DEBUG:
+                val = sysctl_tcp_bbr_debug;
+                break;
+        /*
+         * End of custom implementation.
+	*/
 	default:
 		return -ENOPROTOOPT;
 	}
