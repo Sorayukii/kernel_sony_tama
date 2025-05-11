@@ -160,7 +160,7 @@ void blk_queue_make_request(struct request_queue *q, make_request_fn *mfn)
 	/*
 	 * set defaults
 	 */
-	q->nr_requests = BLKDEV_MAX_RQ;
+	q->nr_requests = 64;
 
 	q->make_request_fn = mfn;
 	blk_queue_dma_alignment(q, 511);
