@@ -309,7 +309,7 @@ HOSTCC       = gcc
 HOSTCXX      = g++
 endif
 
-HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
+HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89 -pipe
 HOSTCXXFLAGS = -O2
 
 ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
@@ -383,7 +383,7 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 NOSTDINC_FLAGS  =
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
-LDFLAGS_MODULE  =
+LDFLAGS_MODULE  = --strip-debug
 CFLAGS_KERNEL	=
 AFLAGS_KERNEL	=
 LDFLAGS_vmlinux =
@@ -412,7 +412,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common -fshort-wchar \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -std=gnu89
+		   -std=gnu89 -pipe
 KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -750,9 +750,28 @@ export DISABLE_CFI
 endif
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-KBUILD_CFLAGS   += -Os
+KBUILD_CFLAGS   += -pipe -Os
 else
-KBUILD_CFLAGS   += -O2
+KBUILD_CFLAGS   += -pipe -O2
+endif
+
+# Optimize for SDM845
+ifdef CONFIG_ARCH_SDM845
+  ifeq ($(cc-name),clang)
+    KBUILD_CFLAGS += -mcpu=cortex-a55 \
+                     -mtune=cortex-a55 \
+                     -march=armv8.2-a+crc+crypto+fp16+dotprod+rcpc
+    KBUILD_AFLAGS += -mcpu=cortex-a55 \
+                     -mtune=cortex-a55 \
+                     -march=armv8.2-a+crc+crypto+fp16+dotprod+rcpc
+  else ifeq ($(cc-name),gcc)
+    KBUILD_CFLAGS += -mcpu=cortex-a75.cortex-a55 \
+                     -mtune=cortex-a75.cortex-a55 \
+                     -march=armv8.2-a+crc+crypto+fp16+dotprod+rcpc
+    KBUILD_AFLAGS += -mcpu=cortex-a75.cortex-a55 \
+                     -mtune=cortex-a75.cortex-a55 \
+                     -march=armv8.2-a+crc+crypto+fp16+dotprod+rcpc
+  endif
 endif
 
 ifdef CONFIG_CC_WERROR
@@ -820,11 +839,19 @@ KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
 # See modpost pattern 2
 KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
 KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+KBUILD_CFLAGS += -mllvm -inline-threshold=600
+KBUILD_CFLAGS += -mllvm -inlinehint-threshold=750
 endif
 
 # These warnings generated too much noise in a regular build.
 # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+KBUILD_CFLAGS	+= --param max-inline-insns-single=600
+KBUILD_CFLAGS	+= --param max-inline-insns-auto=750
+# We limit inlining to 5KB on the stack.
+KBUILD_CFLAGS	+= --param large-stack-frame=12288
+KBUILD_CFLAGS	+= --param inline-min-speedup=5
+KBUILD_CFLAGS	+= --param inline-unit-growth=60
 
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
 ifdef CONFIG_FRAME_POINTER
