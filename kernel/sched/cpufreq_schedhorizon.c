@@ -98,16 +98,22 @@ static DEFINE_PER_CPU(struct sugov_tunables *, cached_tunables);
 
 /************************ Governor internals ***********************/
 
-static int match_nearest_efficient_step(int freq,int maxstep,int *freq_table)
+static int match_nearest_efficient_step(int freq, int maxstep, int *freq_table)
 {
-    int i;
+    int low = 0, high = maxstep - 1, mid, result = maxstep;
 
-    for (i = 0; i < maxstep; i++) {
-        if (freq_table[i] >= freq)
-            break;
+    while (low <= high) {
+        mid = (low + high) / 2;
+
+        if (freq_table[mid] >= freq) {
+            result = mid;
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
     }
 
-    return i;
+    return result;
 }
 
 static void do_freq_limit(struct sugov_policy *sg_policy, unsigned int *freq)
@@ -539,10 +545,13 @@ static ssize_t efficient_freq_show(struct gov_attr_set *attr_set, char *buf)
 	int i;
 	ssize_t ret = 0;
 
-	for (i = 0; i < tunables->nefficient_freq; i++)
-		ret += sprintf(buf + ret, "%u%s", tunables->efficient_freq[i], " ");
+	if (tunables->nefficient_freq == 0)
+		return sprintf(buf, "\n");
 
-	sprintf(buf + ret - 1, "\n");
+	for (i = 0; i < tunables->nefficient_freq; i++)
+		ret += sprintf(buf + ret, "%u ", tunables->efficient_freq[i]);
+
+	buf[ret - 1] = '\n';
 
 	return ret;
 }
@@ -553,11 +562,13 @@ static ssize_t up_delay_show(struct gov_attr_set *attr_set, char *buf)
 	int i;
 	ssize_t ret = 0;
 
+	if (tunables->nup_delay == 0)
+		return sprintf(buf, "\n");
+
 	for (i = 0; i < tunables->nup_delay; i++)
-		ret += sprintf(buf + ret, "%u%s", tunables->up_delay[i], " ");
+		ret += sprintf(buf + ret, "%u ", tunables->up_delay[i]);
 
-	sprintf(buf + ret - 1, "\n");
-
+	buf[ret - 1] = '\n';
 	return ret;
 }
 
