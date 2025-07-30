@@ -30,8 +30,8 @@
 /* Define default efficient_freq and up_delay */
 static unsigned int default_efficient_freq_little[] = {0};
 static unsigned int default_up_delay_little[] = {0};
-static unsigned int default_efficient_freq_big[] = {0};
-static unsigned int default_up_delay_big[] = {0};
+static unsigned int default_efficient_freq_big[] = {1843200, 2092800, 2246400};
+static unsigned int default_up_delay_big[] = {64, 80, 96};
 
 struct sugov_tunables {
 	struct gov_attr_set attr_set;
