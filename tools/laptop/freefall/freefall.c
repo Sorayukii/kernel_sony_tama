@@ -139,8 +139,8 @@ int main(int argc, char **argv)
 
 	openlog(app_name, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
 
-	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
-	sched_setscheduler(0, SCHED_FIFO, &param);
+	param.sched_priority = sched_get_priority_max(SCHED_RR);
+	sched_setscheduler(0, SCHED_RR, &param);
 	mlockall(MCL_CURRENT|MCL_FUTURE);
 
 	signal(SIGALRM, ignore_me);

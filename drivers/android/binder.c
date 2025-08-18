@@ -1261,13 +1261,12 @@ static void binder_transaction_priority(struct task_struct *task,
 
 	if (node_prio.prio < t->priority.prio ||
 	    (node_prio.prio == t->priority.prio &&
-	     node_prio.sched_policy == SCHED_FIFO)) {
+	     node_prio.sched_policy == SCHED_RR)) {
 		/*
 		 * In case the minimum priority on the node is
 		 * higher (lower value), use that priority. If
 		 * the priority is the same, but the node uses
-		 * SCHED_FIFO, prefer SCHED_FIFO, since it can
-		 * run unbounded, unlike SCHED_RR.
+		 * SCHED_RR, prefer SCHED_RR.
 		 */
 		desired_prio = node_prio;
 	}

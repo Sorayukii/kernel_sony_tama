@@ -757,8 +757,8 @@ static int ivtv_init_struct1(struct ivtv *itv)
 		IVTV_ERR("Could not create ivtv task\n");
 		return -1;
 	}
-	/* must use the FIFO scheduler as it is realtime sensitive */
-	sched_setscheduler(itv->irq_worker_task, SCHED_FIFO, &param);
+	/* must use the RR scheduler as it is realtime sensitive */
+	sched_setscheduler(itv->irq_worker_task, SCHED_RR, &param);
 
 	kthread_init_work(&itv->irq_work, ivtv_irq_work_handler);
 

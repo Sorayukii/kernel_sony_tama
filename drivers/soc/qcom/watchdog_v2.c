@@ -415,7 +415,7 @@ static __ref int watchdog_kthread(void *arg)
 	unsigned long delay_time = 0;
 	struct sched_param param = {.sched_priority = MAX_RT_PRIO-1};
 
-	sched_setscheduler(current, SCHED_FIFO, &param);
+	sched_setscheduler(current, SCHED_RR, &param);
 	while (!kthread_should_stop()) {
 		while (wait_event_interruptible(
 			wdog_dd->pet_complete,

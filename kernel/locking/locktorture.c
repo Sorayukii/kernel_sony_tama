@@ -395,7 +395,7 @@ static void torture_rtmutex_boost(struct torture_random_state *trsp)
 		 */
 		if (trsp && !(torture_random(trsp) %
 			      (cxt.nrealwriters_stress * factor))) {
-			policy = SCHED_FIFO;
+			policy = SCHED_RR;
 			param.sched_priority = MAX_RT_PRIO - 1;
 		} else /* common case, do nothing */
 			return;

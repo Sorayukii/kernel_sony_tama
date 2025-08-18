@@ -1292,7 +1292,7 @@ static int spi_init_queue(struct spi_master *master)
 	if (master->rt) {
 		dev_info(&master->dev,
 			"will run message pump with realtime priority\n");
-		sched_setscheduler(master->kworker_task, SCHED_FIFO, &param);
+		sched_setscheduler(master->kworker_task, SCHED_RR, &param);
 	}
 
 	return 0;

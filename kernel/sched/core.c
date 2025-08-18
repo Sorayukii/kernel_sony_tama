@@ -859,14 +859,14 @@ void sched_set_stop_task(int cpu, struct task_struct *stop)
 
 	if (stop) {
 		/*
-		 * Make it appear like a SCHED_FIFO task, its something
+		 * Make it appear like a SCHED_RR task, its something
 		 * userspace knows about and won't get confused about.
 		 *
 		 * Also, it will make PI more or less work without too
 		 * much confusion -- but then, stop work should not
 		 * rely on PI working anyway.
 		 */
-		sched_setscheduler_nocheck(stop, SCHED_FIFO, &param);
+		sched_setscheduler_nocheck(stop, SCHED_RR, &param);
 
 		stop->sched_class = &stop_sched_class;
 	}
@@ -4331,7 +4331,8 @@ static void __setscheduler_params(struct task_struct *p,
 	else
 		policy &= ~SCHED_RESET_ON_FORK;
 
-	p->policy = policy;
+	/* Replace SCHED_FIFO with SCHED_RR to reduce latency */
+	p->policy = policy == SCHED_FIFO ? SCHED_RR : policy;
 
 	if (dl_policy(policy))
 		__setparam_dl(p, attr);

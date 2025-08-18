@@ -176,7 +176,7 @@ OPTIONS
 
 -r::
 --realtime=::
-	Collect data with this RT SCHED_FIFO priority.
+	Collect data with this RT SCHED_RR priority.
 
 --no-buffering::
 	Collect data without buffering.

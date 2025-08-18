@@ -1731,7 +1731,7 @@ int mdp3_ppp_res_init(struct msm_fb_data_type *mfd)
 		ppp_stat->blit_thread = NULL;
 		return rc;
 	}
-	if (sched_setscheduler(ppp_stat->blit_thread, SCHED_FIFO, &param))
+	if (sched_setscheduler(ppp_stat->blit_thread, SCHED_RR, &param))
 		pr_warn("set priority failed for mdp3 blit thread\n");
 
 	INIT_WORK(&ppp_stat->free_bw_work, mdp3_free_bw_wq_handler);

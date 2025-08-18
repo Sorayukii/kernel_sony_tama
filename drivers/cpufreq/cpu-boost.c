@@ -343,9 +343,9 @@ static int cpu_boost_init(void)
 		return -EFAULT;
 	}
 
-	ret = sched_setscheduler(cpu_boost_worker_thread, SCHED_FIFO, &param);
+	ret = sched_setscheduler(cpu_boost_worker_thread, SCHED_RR, &param);
 	if (ret)
-		pr_err("cpu-boost: Failed to set SCHED_FIFO!\n");
+		pr_err("cpu-boost: Failed to set SCHED_RR!\n");
 
 	/* Now bind it to the cpumask */
 	kthread_bind_mask(cpu_boost_worker_thread, &sys_bg_mask);

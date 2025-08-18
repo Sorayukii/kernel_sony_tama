@@ -3123,7 +3123,7 @@ int mdp3_ctrl_init(struct msm_fb_data_type *mfd)
 		goto init_done;
 	}
 
-	sched_setscheduler(mdp3_session->thread, SCHED_FIFO, &sched);
+	sched_setscheduler(mdp3_session->thread, SCHED_RR, &sched);
 
 	atomic_set(&mdp3_session->vsync_countdown, 0);
 	mutex_init(&mdp3_session->histo_lock);

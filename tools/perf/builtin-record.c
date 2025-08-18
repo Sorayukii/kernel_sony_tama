@@ -921,7 +921,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
 		struct sched_param param;
 
 		param.sched_priority = rec->realtime_prio;
-		if (sched_setscheduler(0, SCHED_FIFO, &param)) {
+		if (sched_setscheduler(0, SCHED_RR, &param)) {
 			pr_err("Could not set realtime priority.\n");
 			err = -1;
 			goto out_child;
@@ -1408,7 +1408,7 @@ struct option __record_options[] = {
 	OPT_STRING('t', "tid", &record.opts.target.tid, "tid",
 		    "record events on existing thread id"),
 	OPT_INTEGER('r', "realtime", &record.realtime_prio,
-		    "collect data with this RT SCHED_FIFO priority"),
+		    "collect data with this RT SCHED_RR priority"),
 	OPT_BOOLEAN(0, "no-buffering", &record.opts.no_buffering,
 		    "collect data without buffering"),
 	OPT_BOOLEAN('R', "raw-samples", &record.opts.raw_samples,

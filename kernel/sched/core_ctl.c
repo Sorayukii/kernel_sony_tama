@@ -1155,7 +1155,7 @@ static int cluster_init(const struct cpumask *mask)
 	if (IS_ERR(cluster->core_ctl_thread))
 		return PTR_ERR(cluster->core_ctl_thread);
 
-	sched_setscheduler_nocheck(cluster->core_ctl_thread, SCHED_FIFO,
+	sched_setscheduler_nocheck(cluster->core_ctl_thread, SCHED_RR,
 				   &param);
 
 	cluster->inited = true;

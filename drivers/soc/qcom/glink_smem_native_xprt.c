@@ -2229,7 +2229,7 @@ static int rx_rt_vote(struct glink_transport_if *if_ptr)
 	einfo = container_of(if_ptr, struct edge_info, xprt_if);
 	spin_lock_irqsave(&einfo->rt_vote_lock, flags);
 	if (!einfo->rt_votes)
-		ret = sched_setscheduler_nocheck(einfo->task, SCHED_FIFO,
+		ret = sched_setscheduler_nocheck(einfo->task, SCHED_RR,
 							&param);
 	einfo->rt_votes++;
 	spin_unlock_irqrestore(&einfo->rt_vote_lock, flags);

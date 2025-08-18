@@ -1235,7 +1235,7 @@ static int switch_to_rt_policy(void)
 		return 1;
 
 	/* Only SCHED_NORMAL left. */
-	err = sched_setscheduler_nocheck(current, SCHED_FIFO, &param);
+	err = sched_setscheduler_nocheck(current, SCHED_RR, &param);
 	return err;
 
 }

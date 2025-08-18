@@ -407,7 +407,7 @@ void watchdog_enable(unsigned int cpu)
 		      HRTIMER_MODE_REL_PINNED);
 
 	/* initialize timestamp */
-	watchdog_set_prio(SCHED_FIFO, MAX_RT_PRIO - 1);
+	watchdog_set_prio(SCHED_RR, MAX_RT_PRIO - 1);
 	__touch_watchdog();
 
 	/*
