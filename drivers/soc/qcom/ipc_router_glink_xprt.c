@@ -792,7 +792,7 @@ static int ipc_router_glink_config_init(
 	}
 
 	if (glink_xprtp->low_latency_xprt)
-		sched_setscheduler(glink_xprtp->task, SCHED_FIFO, &param);
+		sched_setscheduler(glink_xprtp->task, SCHED_RR, &param);
 
 	scnprintf(glink_xprtp->notify_rx_ws_name, IPC_RTR_WS_NAME_LEN,
 			"%s_%s_rx", glink_xprtp->ch_name, glink_xprtp->edge);

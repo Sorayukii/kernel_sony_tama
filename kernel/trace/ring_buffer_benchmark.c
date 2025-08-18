@@ -305,14 +305,14 @@ static void ring_buffer_producer(void)
 			trace_printk("Running Consumer at nice: %d\n",
 				     consumer_nice);
 		else
-			trace_printk("Running Consumer at SCHED_FIFO %d\n",
+			trace_printk("Running Consumer at SCHED_RR %d\n",
 				     consumer_fifo);
 	}
 	if (producer_fifo < 0)
 		trace_printk("Running Producer at nice: %d\n",
 			     producer_nice);
 	else
-		trace_printk("Running Producer at SCHED_FIFO %d\n",
+		trace_printk("Running Producer at SCHED_RR %d\n",
 			     producer_fifo);
 
 	/* Let the user know that the test is running at low priority */
@@ -457,7 +457,7 @@ static int __init ring_buffer_benchmark_init(void)
 			struct sched_param param = {
 				.sched_priority = consumer_fifo
 			};
-			sched_setscheduler(consumer, SCHED_FIFO, &param);
+			sched_setscheduler(consumer, SCHED_RR, &param);
 		} else
 			set_user_nice(consumer, consumer_nice);
 	}
@@ -466,7 +466,7 @@ static int __init ring_buffer_benchmark_init(void)
 		struct sched_param param = {
 			.sched_priority = producer_fifo
 		};
-		sched_setscheduler(producer, SCHED_FIFO, &param);
+		sched_setscheduler(producer, SCHED_RR, &param);
 	} else
 		set_user_nice(producer, producer_nice);
 

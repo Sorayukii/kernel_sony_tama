@@ -3842,7 +3842,7 @@ static int __mdss_fb_display_thread(void *data)
 	 * other real time and normal priority tasks
 	 */
 	param.sched_priority = 16;
-	ret = sched_setscheduler(current, SCHED_FIFO, &param);
+	ret = sched_setscheduler(current, SCHED_RR, &param);
 	if (ret)
 		pr_warn("set priority failed for fb%d display thread\n",
 				mfd->index);

@@ -4010,7 +4010,7 @@ static int glink_core_init_xprt_qos_cfg(struct glink_core_xprt_ctx *xprt_ptr,
 				sizeof(struct glink_qos_priority_bin),
 				GFP_KERNEL);
 	if (xprt_ptr->num_priority > 1)
-		sched_setscheduler(xprt_ptr->tx_task, SCHED_FIFO, &param);
+		sched_setscheduler(xprt_ptr->tx_task, SCHED_RR, &param);
 	if (!xprt_ptr->prio_bin) {
 		GLINK_ERR("%s: unable to allocate priority bins\n", __func__);
 		return -ENOMEM;

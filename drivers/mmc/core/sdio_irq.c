@@ -108,7 +108,7 @@ static int sdio_irq_thread(void *_host)
 	int ret;
 	bool ws;
 
-	sched_setscheduler(current, SCHED_FIFO, &param);
+	sched_setscheduler(current, SCHED_RR, &param);
 
 	/*
 	 * We want to allow for SDIO cards to work even on non SDIO

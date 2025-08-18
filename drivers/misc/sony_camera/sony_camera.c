@@ -1626,7 +1626,7 @@ static int sony_camera_task_handler(void *data)
 	struct sched_param PARAM = {.sched_priority = MAX_RT_PRIO };
 
 	tsk = current;
-	sched_setscheduler(tsk, SCHED_FIFO, &PARAM);
+	sched_setscheduler(tsk, SCHED_RR, &PARAM);
 
 	if (data == NULL)
 		return -EINVAL;

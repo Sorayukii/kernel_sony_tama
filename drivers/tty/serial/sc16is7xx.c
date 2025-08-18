@@ -1223,7 +1223,7 @@ static int sc16is7xx_probe(struct device *dev,
 		ret = PTR_ERR(s->kworker_task);
 		goto out_clk;
 	}
-	sched_setscheduler(s->kworker_task, SCHED_FIFO, &sched_param);
+	sched_setscheduler(s->kworker_task, SCHED_RR, &sched_param);
 
 #ifdef CONFIG_GPIOLIB
 	if (devtype->nr_gpio) {

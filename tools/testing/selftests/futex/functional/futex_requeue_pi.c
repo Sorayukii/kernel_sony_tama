@@ -307,7 +307,7 @@ int unit_test(int broadcast, long lock, int third_party_owner, long timeout_ns)
 
 	if (third_party_owner) {
 		if (create_rt_thread(&blocker, third_party_blocker,
-				     (void *)&blocker_arg, SCHED_FIFO, 1)) {
+				     (void *)&blocker_arg, SCHED_RR, 1)) {
 			error("Creating third party blocker thread failed\n",
 			      errno);
 			ret = RET_ERROR;
@@ -321,7 +321,7 @@ int unit_test(int broadcast, long lock, int third_party_owner, long timeout_ns)
 		args[i].timeout = tsp;
 		info("Starting thread %d\n", i);
 		if (create_rt_thread(&waiter[i], waiterfn, (void *)&args[i],
-				     SCHED_FIFO, 1)) {
+				     SCHED_RR, 1)) {
 			error("Creating waiting thread failed\n", errno);
 			ret = RET_ERROR;
 			goto out;
@@ -329,7 +329,7 @@ int unit_test(int broadcast, long lock, int third_party_owner, long timeout_ns)
 	}
 	waker_arg.lock = lock;
 	if (create_rt_thread(&waker, wakerfn, (void *)&waker_arg,
-			     SCHED_FIFO, 1)) {
+			     SCHED_RR, 1)) {
 		error("Creating waker thread failed\n", errno);
 		ret = RET_ERROR;
 		goto out;

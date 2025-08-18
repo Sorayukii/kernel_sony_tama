@@ -996,7 +996,7 @@ static int __cmd_top(struct perf_top *top)
 		struct sched_param param;
 
 		param.sched_priority = top->realtime_prio;
-		if (sched_setscheduler(0, SCHED_FIFO, &param)) {
+		if (sched_setscheduler(0, SCHED_RR, &param)) {
 			ui__error("Could not set realtime priority.\n");
 			goto out_join;
 		}
@@ -1132,7 +1132,7 @@ int cmd_top(int argc, const char **argv, const char *prefix __maybe_unused)
 		     "number of mmap data pages",
 		     perf_evlist__parse_mmap_pages),
 	OPT_INTEGER('r', "realtime", &top.realtime_prio,
-		    "collect data with this RT SCHED_FIFO priority"),
+		    "collect data with this RT SCHED_RR priority"),
 	OPT_INTEGER('d', "delay", &top.delay_secs,
 		    "number of seconds to delay between refreshes"),
 	OPT_BOOLEAN('D', "dump-symtab", &top.dump_symtab,

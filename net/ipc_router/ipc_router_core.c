@@ -4164,7 +4164,7 @@ static int msm_ipc_router_add_xprt(struct msm_ipc_router_xprt *xprt)
 		return -ENOMEM;
 	}
 	if (xprt->get_latency_info && xprt->get_latency_info(xprt))
-		sched_setscheduler(xprt_info->task, SCHED_FIFO, &param);
+		sched_setscheduler(xprt_info->task, SCHED_RR, &param);
 
 	xprt_info->log_ctx = ipc_router_get_log_ctx(xprt->name);
 

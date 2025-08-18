@@ -277,7 +277,7 @@ static int bL_switcher_thread(void *arg)
 	bL_switch_completion_handler completer;
 	void *completer_cookie;
 
-	sched_setscheduler_nocheck(current, SCHED_FIFO, &param);
+	sched_setscheduler_nocheck(current, SCHED_RR, &param);
 	complete(&t->started);
 
 	do {

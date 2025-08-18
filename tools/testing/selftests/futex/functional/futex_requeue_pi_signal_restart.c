@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 
 	info("m1:f2: %x\n", f2);
 	info("Creating waiter\n");
-	res = create_rt_thread(&waiter, waiterfn, NULL, SCHED_FIFO, 1);
+	res = create_rt_thread(&waiter, waiterfn, NULL, SCHED_RR, 1);
 	if (res) {
 		error("Creating waiting thread failed", res);
 		ret = RET_ERROR;
