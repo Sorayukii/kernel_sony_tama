@@ -293,8 +293,6 @@ struct idtp9221 {
 #define idtp9221_dbg(chip, reason, fmt, ...)				\
 	do {								\
 		if (*chip->debug_mask & (reason))			\
-			pr_err(fmt, ##__VA_ARGS__);		\
-		else							\
 			pr_debug(fmt, ##__VA_ARGS__);		\
 	} while (0)
 
