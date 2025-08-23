@@ -712,9 +712,9 @@ int hibernate(void)
 		goto Exit;
 	}
 
-	pr_debug("PM: Syncing filesystems ... ");
+	printk(KERN_INFO "PM: Syncing filesystems ... ");
 	sys_sync();
-	pr_debug("done.\n");
+	printk("done.\n");
 
 	error = freeze_processes();
 	if (error)
