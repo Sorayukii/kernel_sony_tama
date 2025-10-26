@@ -258,3 +258,32 @@ config DEVFREQ_SPDM
 source "drivers/devfreq/event/Kconfig"
 
 endif # PM_DEVFREQ
+
+config ADRENOBOOST
+	bool "Adreno GPU Boost support"
+	depends on DEVFREQ_GOV_QCOM_ADRENO_TZ
+	default y
+	help
+	  Enable Adrenoboost feature for Adreno GPU devices.
+	  This feature dynamically adjusts GPU frequency to improve
+	  responsiveness during GPU-intensive workloads.
+
+	  If unsure, say N.
+
+if ADRENOBOOST
+
+config ADRENOBOOST_DEFAULT_LEVEL
+	int "Default Adrenoboost level (0-3)"
+	range 0 3
+	default 1
+	help
+	  Set the default adrenoboost level:
+	    0 - Off
+	    1 - Low
+	    2 - Medium
+	    3 - High
+
+	  Higher levels provide stronger GPU performance boosts
+	  at the cost of increased power consumption.
+
+endif # ADRENOBOOST
