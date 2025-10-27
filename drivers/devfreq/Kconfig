@@ -282,6 +282,7 @@ config ADRENOBOOST_DEFAULT_LEVEL
 	    1 - Low
 	    2 - Medium
 	    3 - High
+	    4 - Ultra
 
 	  Higher levels provide stronger GPU performance boosts
 	  at the cost of increased power consumption.
