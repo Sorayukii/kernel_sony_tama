@@ -441,16 +441,14 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 #ifdef CONFIG_ADRENOBOOST
 	// scale busy time up based on adrenoboost parameter, only if MIN_BUSY exceeded...
 	if (adrenoboost) {
-		static const int boost_factor[] = { 0, 10, 7, 8, 9 }; /* indexed by adrenoboost level */
+		static const int boost_factor[] = { 10, 7, 8, 9 }; /* indexed by adrenoboost level (1–4) */
 		static const int *lvl_mult_map[] = {
-			NULL,
 			lvl_multiplicator_map_1,
 			lvl_multiplicator_map_2,
 			lvl_multiplicator_map_3,
 			lvl_multiplicator_map_4
 		};
 		static const int *lvl_div_map[] = {
-			NULL,
 			lvl_divider_map_1,
 			lvl_divider_map_2,
 			lvl_divider_map_3,
@@ -458,9 +456,9 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 		};
 
 		if (adrenoboost >= 1 && adrenoboost <= 4) {
-			const int *mult_map = lvl_mult_map[adrenoboost];
-			const int *div_map  = lvl_div_map[adrenoboost];
-			int factor = boost_factor[adrenoboost];
+			const int *mult_map = lvl_mult_map[adrenoboost - 1];
+			const int *div_map  = lvl_div_map[adrenoboost - 1];
+			int factor = boost_factor[adrenoboost - 1];
 
 			priv->bin.busy_time += (unsigned int)
 				((stats.busy_time * (1 + adrenoboost) *
